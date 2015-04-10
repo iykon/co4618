@@ -42,6 +42,13 @@ always @(posedge clk) begin
 	A = dnd;
 	P = 64'b0;
 
+	// the divider cannot be 0
+	err = 0;
+	if (B == 0) begin
+		err = 1;
+	end;
+
+	// if the divider is negative, sign it and reverse it
 	if (B[63] == 1) begin
 		ner = 1;
 		B = -B;
@@ -50,6 +57,7 @@ always @(posedge clk) begin
 		ner = 0;
 	end
 
+	// if the dividend is negative, sign it and reverse it
 	if (A[63] == 1) begin
 		nnd = 1;
 		A = -A;
@@ -58,6 +66,7 @@ always @(posedge clk) begin
 		nnd = 0;
 	end
 
+	// the division algorithm, see the text book P766
 	for (i = 0; i < 64; i = i + 1) begin
 		P = P << 1;
 		P[0] = A[63];
@@ -81,13 +90,12 @@ always @(posedge clk) begin
 		P = P + B;
 	end
 
+	// error dectection
 	if ((A[63:32] != 0)||((ner^nnd == 0) && (A[63]==1))) begin
 		err = 1;
 	end
-	else begin
-		err = 0;
-	end
 
+	// negative situation handled
 	route = (nnd << 1) + ner;
 	case(route)
 		2'b01:begin
@@ -101,6 +109,8 @@ always @(posedge clk) begin
 			P <= -P;
 		end
 	endcase
+
+	// output
 	quo <= A[31:0];
 	rem <= P[31:0];
 end
