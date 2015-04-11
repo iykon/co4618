@@ -46,7 +46,7 @@ always @(posedge clk) begin
 	err = 0;
 	if (B == 0) begin
 		err = 1;
-	end;
+	end
 
 	// if the divider is negative, sign it and reverse it
 	if (B[63] == 1) begin
@@ -106,7 +106,7 @@ always @(posedge clk) begin
 			P = -P;
 		end
 		2'b11:begin
-			P <= -P;
+			P = -P;
 		end
 	endcase
 
