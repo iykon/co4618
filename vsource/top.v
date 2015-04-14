@@ -58,6 +58,9 @@ mul_float mulfloat(clk, num1[31:0], num2, mulfr, mulfloatoverflow);
 
 display_16 disp0(clk,result,button_disp[3:2],anode[11:8],segment[7:0]);
 display_32 disp1(clk,{num1,num2},button_disp,anode[7:0],segment[15:8]);
+//floating point 
+floating_point_adder fpa0(clk,n1[31:0],n2[31:0],0,addfr);
+floating_point_adder fpa1(clk,n1[31:0],n2[31:0],1,subfr);
 
 always @* begin
 	if(dec==1)
@@ -152,11 +155,11 @@ always @* begin
     end
     4'b0100:begin
       lastresult <= result;
-      result <= {32'b0,addfr};
+      result <= {32'b0,addfr};    //floating number adder
     end
     4'b0101:begin
       lastresult <= result;
-      result <= {32'b0,subfr};
+      result <= {32'b0,subfr};    //floating number subber
     end
     4'b0110:begin
       lastresult <= result;
