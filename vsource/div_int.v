@@ -1,118 +1,79 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
-// Company:
-// Engineer:
+// Company: 
+// Engineer: 
+// 
+// Create Date:    19:53:44 04/11/2015 
+// Design Name: 
+// Module Name:    div_int 
+// Project Name: 
+// Target Devices: 
+// Tool versions: 
+// Description: 
 //
-// Create Date:    13:31:24 04/08/2015
-// Design Name:
-// Module Name:    IntDiv
-// Project Name:
-// Target Devices:
-// Tool versions:
-// Description:
+// Dependencies: 
 //
-// Dependencies:
-//
-// Revision:
+// Revision: 
 // Revision 0.01 - File Created
-// Additional Comments:
+// Additional Comments: 
 //
 //////////////////////////////////////////////////////////////////////////////////
 module div_int(
 	 input clk,
     input [63:0] dnd,
     input [31:0] der,
-    output  reg [31:0] quo,
-    output  reg [31:0] rem,
-    output  reg err
+    output [31:0] quo,
+    output [31:0] rem,
+    output err
     );
 
-reg ner = 0, nnd = 0;	// whether the devider and the devidend are negative
+reg [127:0] PA;
+reg [127:0] res;
+reg [5:0] cnt;
 reg [63:0] B = 64'b0;
-reg [63:0] P = 64'b0;
-reg [63:0] A = 64'b0;
-reg [7:0] i;
-reg [1:0] route;
+reg errf;
 
-always @(posedge clk) begin
-	B[31:0] = der;
-	for (i = 32; i < 64; i = i + 1) begin
-		B[i] = der[31];
-	end
-	A = dnd;
-	P = 64'b0;
+assign quo = res[31:0];
+assign rem = res[95:64];
+assign err = errf;
 
-	// the divider cannot be 0
-	err = 0;
-	if (B == 0) begin
-		err = 1;
-	end
-
-	// if the divider is negative, sign it and reverse it
-	if (B[63] == 1) begin
-		ner = 1;
-		B = -B;
-	end
-	else begin
-		ner = 0;
-	end
-
-	// if the dividend is negative, sign it and reverse it
-	if (A[63] == 1) begin
-		nnd = 1;
-		A = -A;
-	end
-	else begin
-		nnd = 0;
-	end
-
-	// the division algorithm, see the text book P766
-	for (i = 0; i < 64; i = i + 1) begin
-		P = P << 1;
-		P[0] = A[63];
-		A = A << 1;
-
-		if (P[63] == 1) begin
-			P = P + B;
-		end
-		else begin
-			P = P - B;
-		end
-
-		if (P[63] == 1) begin
-			A[0] = 0;
-		end
-		else begin
-			A[0] = 1;
-		end
-	end
-	if (P[63] == 1) begin
-		P = P + B;
-	end
-
-	// error dectection
-	if ((A[63:32] != 0)||((ner^nnd == 0) && (A[63]==1))) begin
-		err = 1;
-	end
-
-	// negative situation handled
-	route = (nnd << 1) + ner;
-	case(route)
-		2'b01:begin
-			A = -A;
-		end
-		2'b10:begin
-			A = -A;
-			P = -P;
-		end
-		2'b11:begin
-			P = -P;
-		end
-	endcase
-
-	// output
-	quo <= A[31:0];
-	rem <= P[31:0];
+initial begin
+	cnt = 6'b0;
+	PA = 128'b0;
 end
 
+always @(posedge clk) begin
+	if (cnt == 0) begin
+		if (PA[127] == 1) begin
+			PA[127:64] = PA[127:64] + B;
+		end
+		res = PA;
+		//-------------------------
+		B[31:0] = der;
+		B[63:32] = {der[31],der[31],der[31],der[31],der[31],der[31],der[31],der[31],der[31],der[31],der[31],der[31],der[31],der[31],der[31],der[31],
+						der[31],der[31],der[31],der[31],der[31],der[31],der[31],der[31],der[31],der[31],der[31],der[31],der[31],der[31],der[31],der[31]};
+		PA = {64'b0, dnd};
+		errf = 0;
+		if (B == 0) begin
+			errf = 1;
+		end
+	end
+	PA = PA << 1;
+	//----------------------
+	if (PA[127] == 1) begin
+		PA[127:64] = PA[127:64] + B;
+	end
+	else begin
+		PA[127:64] = PA[127:64] - B;
+	end
+	//----------------------
+	if (PA[127] == 1) begin
+		PA[0] = 0;
+	end
+	else begin
+		PA[0] = 1;
+	end
+	//----------------------
+	cnt = cnt + 1;
+end
 endmodule

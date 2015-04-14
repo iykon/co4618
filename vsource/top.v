@@ -29,10 +29,12 @@ output [15:0]segment;
 reg [63:0]lastresult,mulir,result;
 wire [31:0]andr,orr,norr,notr,asr,csr,llsr,lrsr,addir,subir,diviq,divir,addfr,subfr,mulfr,divfr;
 wire sltr,sltur,sf0,cf0,of0,error,sf1,cf1,of1;
+wire divIntErr, divFltErr;
 wire [7:0]inc;
 reg [63:0]num1;
 reg [31:0]num2;
 reg [3:0]incdec;
+reg mulfloatoverflow;
 
 and_32 and0(num1[31:0],num2,andr);
 or_32 or0(num1[31:0],num2,orr);
@@ -48,8 +50,11 @@ cs cs0(lastresult[31:0],csr);
 CLA32bits cla0(num1[31:0],num2,0,addir,sf0,cf0,of0);
 CLA32bits cla1(num1[31:0],num2,1,subir,sf1,cf1,of1);
 
-//div_int divint0(clk,num1,num2,diviq,divir,error);
-mul_int_2booth lalala(clk, num1, num2, mulfr, error);
+div_int divint0(clk,num1,num2,diviq,divir,divIntErr);
+div_float divflt0(clk,num1[31:0],num2,divfr,divFltErr);
+
+//mul_int_2booth mulint(clk, num1[31:0], num2, mulir, error);
+mul_float mulfloat(clk, num1[31:0], num2, mulfr, mulfloatoverflow);
 
 display_16 disp0(clk,result,button_disp[3:2],anode[11:8],segment[7:0]);
 display_32 disp1(clk,{num1,num2},button_disp,anode[7:0],segment[15:8]);
@@ -143,7 +148,7 @@ always @* begin
     end
     4'b0011:begin
       lastresult <= result;
-      result <= {32'b0,divir};
+      result <= {diviq,divir};
     end
     4'b0100:begin
       lastresult <= result;
