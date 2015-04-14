@@ -3,9 +3,9 @@
 // Company: 
 // Engineer: 
 // 
-// Create Date:    21:04:26 04/09/2015 
+// Create Date:    00:08:59 04/15/2015 
 // Design Name: 
-// Module Name:    mul_int_2booth 
+// Module Name:    mul_2booth 
 // Project Name: 
 // Target Devices: 
 // Tool versions: 
@@ -18,17 +18,22 @@
 // Additional Comments: 
 //
 //////////////////////////////////////////////////////////////////////////////////
-module mul_int_2booth(
+module mul_2booth(
 			input clk,
-			input wire [31:0]a,
-			input wire [31:0]b,
-			output reg [63:0]c,
-			output reg overflow							// mark of overflow
+			input [31:0]a,
+			input [31:0]b,
+			output [63:0]ans,
+			output of							// mark of overflow
 		);
 	reg [3:0] cnt;
 	reg [63:0] tmp;
+	reg [63:0] c;
 	reg last;									// used for choosing 2 booth's status
+	reg overflow;
 	wire [31:0] b_double;
+	
+	assign of = overflow;
+	assign ans = c;
 	
 	initial begin
 		tmp = 64'b0;							// initialize
@@ -67,4 +72,3 @@ module mul_int_2booth(
 	end
 	
 endmodule
-
