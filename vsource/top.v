@@ -49,6 +49,7 @@ CLA32bits cla0(num1[31:0],num2,0,addir,sf0,cf0,of0);
 CLA32bits cla1(num1[31:0],num2,1,subir,sf1,cf1,of1);
 
 //div_int divint0(clk,num1,num2,diviq,divir,error);
+mul_int_2booth lalala(clk, num1, num2, mulfr, error);
 
 display_16 disp0(clk,result,button_disp[3:2],anode[11:8],segment[7:0]);
 display_32 disp1(clk,{num1,num2},button_disp,anode[7:0],segment[15:8]);

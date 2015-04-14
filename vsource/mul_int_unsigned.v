@@ -24,16 +24,24 @@ module mul_int(
 		input wire [31:0]b,
 		output reg [63:0]c
 		);
-	reg [6:0] i;
-
+	reg [4:0] cnt;
+	reg [63:0] tmp;
+	
+	initial begin
+		cnt = 5'b0;
+		tmp = 64'b0;
+	end
+	
 	always @(posedge clk) begin
-		c = 64'b0;
-		for (i = 0; i < 32; i = i + 1) begin
-			if (a[i] == 1'b1) begin
-				c[63:32] = b[31:0] + c[63:32]; 	//adder_32bits adder(b[31:0] + c[63:32] => c[63:32]), maybe need a tmp varible here.
-			end
-			c = c >> 1; 	//lrs(c, 1);
+		if (cnt == 5'b0) begin
+			c = tmp;
+			tmp = 64'b0;
 		end
+		if (a[cnt] == 1'b1) begin
+			tmp[63:32] = b[31:0] + tmp[63:32]; 	//adder_32bits adder(b[31:0] + c[63:32] => c[63:32]), maybe need a tmp varible here.
+		end
+		tmp = tmp >> 1; 	//lrs(c, 1);
+		cnt = cnt + 5'b1;
 	end
 	
 endmodule
