@@ -50,7 +50,7 @@ always @(posedge clk) begin
 		res = PA;
 		if (PA[63:32] != 0) begin
 			errf = 1;
-		end;
+		end
 
 		//=============================
 		B = {32'b0, der};
