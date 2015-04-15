@@ -23,7 +23,8 @@ module floating_point_adder(
 	input wire [31:0] A,
 	input wire [31:0] B,
 	input wire op,	
-	output wire [31:0] res
+	output wire [31:0] res,
+	output reg error
 	    );
 	 
 	wire operator;
@@ -43,6 +44,7 @@ module floating_point_adder(
 	 reg [5:0] count;
 	 initial begin 
 		count[5:0]=6'b000000;
+		error=0;
 	 end
 	assign operator=B[31]^A[31]^op;
 	assign	res[31]=A[31]^temp_sign; 
@@ -57,12 +59,12 @@ module floating_point_adder(
 			rtemp[24:0]=temp_res[24:0];
 			etemp=lexp;
 			count[5:0]=count[5:0]+1'b1;
+			error=0;
 		end
 		else begin
-			if(rtemp==0) begin
-				final_res<=0;
-				final_exp<=0;
+			if(rtemp==0||etemp==8'hff) begin
 				count[5:0]=6'b000000;
+				error=1;
 			end
 			else if(rtemp>=25'h1000000)begin
 				rtemp=rtemp>>1'b1;

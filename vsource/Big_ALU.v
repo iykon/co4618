@@ -36,7 +36,7 @@ module Big_ALU(
 			midres=A+B;
 		end
 		if(midres[25])begin
-			midres=midres^25'h1FFFFFF+1;
+			midres=~midres+1;
 			sign=1;
 		end
 		else begin
