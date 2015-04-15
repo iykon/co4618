@@ -34,7 +34,8 @@ module mul_float(
 	wire sign;
 	wire g;
 	wire [7:0]e_final;
-	wire [22:0]P_final; 
+	wire [22:0]P_final;
+	wire err_INF;
 	
 	reg [8:0]e;
 	reg [23:0]P;
@@ -66,11 +67,11 @@ module mul_float(
 		if (r && s) P = P + 23'b1;
 	end
 	
-	specialJudge sj(a[30:0], b[30:0], {e[7:0], P[22:0]}, {e_final[7:0], P_final[22:0]});
+	specialJudge sj(a[30:0], b[30:0], {e[7:0], P[22:0]}, {e_final[7:0], P_final[22:0]}, err_INF);
 
 	assign c[31] = sign;
 	assign c[30:23] = e_final[7:0];
 	assign c[22:0] = P_final[22:0];
-	assign overflow = e[8];
+	assign overflow = e[8] || err_INF;
 
 endmodule
