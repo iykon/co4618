@@ -22,19 +22,21 @@ module mul_int(
 		input clk,
 		input wire [31:0]a,
 		input wire [31:0]b,
-		output reg [63:0]c
+		output wire [63:0]c
 		);
 	reg [4:0] cnt;
 	reg [63:0] tmp;
+	reg [63:0] ans;
 	
 	initial begin
 		cnt = 5'b0;
 		tmp = 64'b0;
+		ans = 64'b0;
 	end
 	
 	always @(posedge clk) begin
 		if (cnt == 5'b0) begin
-			c = tmp;
+			ans = tmp;
 			tmp = 64'b0;
 		end
 		if (a[cnt] == 1'b1) begin
@@ -44,5 +46,8 @@ module mul_int(
 		cnt = cnt + 5'b1;
 	end
 	
+	assign c = ans;
+	
 endmodule
+
 
