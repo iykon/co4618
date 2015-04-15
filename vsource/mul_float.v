@@ -70,7 +70,7 @@ module mul_float(
 
 	assign c[31] = sign;
 	assign c[30:23] = e_final[7:0];
-	assign c[22:0] = P_final[22:0];
+	assign c[22:0] = {1'b1, P_final[22:1]};
 	assign overflow = e[8];
 
 endmodule
