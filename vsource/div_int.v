@@ -51,7 +51,7 @@ always @(posedge clk) begin
 		res = PA;
 		if ((PA[63] == 0) && (PA[62:32] != 0)) begin
 			errf = 1;
-		end;
+		end
 
 		if (signER == 1) begin
 			if (signND == 1) begin

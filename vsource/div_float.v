@@ -172,15 +172,31 @@ always @(posedge clk) begin
 		e = e - (sft+1) - 40 + 64;
 		PA = PA << (sft+1);
 		
+		errf = 0;
+		
+		if (der == 0)
+			errf = 1;
 		if ((dnd[30] == der[30]) && (dnd[30] != e[7]))
 			errf = 1;
-		else
-			errf = 0;
-
-		res[31] = dnd[31] ^ der[31];
-		res[30:23] = e;
-		res[22:0] = PA[63:41];
-
+		if ((dnd[30:23] == 8'b11111111) && (dnd[22:0] != 0))
+			errf = 1;
+		if ((der[30:23] == 8'b11111111) && (der[22:0] != 0))
+			errf = 1;
+		if (((dnd[30:23] == 8'b11111111) && (dnd[22:0] == 0)) && ((der[30:23] == 8'b11111111) && (der[22:0] == 0)))
+			errf = 1;
+		
+		if ((dnd[30:23] == 8'b11111111) && (dnd[22:0] == 0)) begin
+			res = dnd;
+		end
+		else if ((der[30:23] == 8'b11111111) && (der[22:0] == 0)) begin
+			res = 32'b0;
+		end
+		else begin
+			res[31] = dnd[31] ^ der[31];
+			res[30:23] = e;
+			res[22:0] = PA[63:41];
+		end
+		
 		// initialization
 		PA = 0;
 		PA[63:40] = {1, dnd[22:0]};
