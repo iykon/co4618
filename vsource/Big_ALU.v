@@ -31,16 +31,18 @@ module Big_ALU(
 	always @(posedge clk) begin
 		if(op) begin
 			midres=A-B;
+			if(midres[25])begin
+				midres=~midres+1;
+				sign=1;
+			end
+			else begin
+				sign=0;
+			end
 		end
 		else begin
 			midres=A+B;
-		end
-		if(midres[25])begin
-			midres=midres^25'h1FFFFFF+1;
-			sign=1;
-		end
-		else begin
 			sign=0;
 		end
+		
 	end
 endmodule
