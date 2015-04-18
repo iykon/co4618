@@ -67,7 +67,7 @@ module floating_point_adder(
 		else begin
 			if(etemp==0) begin
 				final_res=0;
-				fianl_exp=0;
+				final_exp=0;
 				count[5:0]=6'b000000;
 			end
 			else if(etemp==8'hff) begin
@@ -92,8 +92,8 @@ module floating_point_adder(
 			end 
 			else begin
 				rtemp=rtemp+last;
-				final_res<=rtemp[22:0];
-				final_exp<=etemp;
+				final_res=rtemp[22:0];
+				final_exp=etemp;
 				count[5:0]=6'b000000;
 			end
 		end
