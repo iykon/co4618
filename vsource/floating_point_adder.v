@@ -52,6 +52,7 @@ module floating_point_adder(
 	assign	res[31]=A[31]^temp_sign; 
 	assign res[22:0]=final_res;
 	assign res[30:23]=final_exp;
+	
 	Small_ALU SA_instance(clk, A[30:23], B[30:23],exp_diff[8:0],lexp);
 	Mantissa_Shift MS_instance(clk,A, B,exp_diff,mant_A, mant_B);
 	Big_ALU BA_instance(clk, mant_A, mant_B, operator, temp_res, temp_sign);
@@ -74,9 +75,11 @@ module floating_point_adder(
 				if(rtemp==0) begin
 					final_res=23'h7fffff;
 					final_exp=8'hff;
+					count=0;
 				end
 				else begin
 					error=1;
+					count=0;
 				end
 			end
 			else if(rtemp>=25'h1000000)begin
